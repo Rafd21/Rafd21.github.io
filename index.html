@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Извлечение золота химическим путем</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d4af37;
+            --primary-dark: #b7950b;
+            --secondary: #2c3e50;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --danger: #dc3545;
+            --success: #28a745;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.7;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+            background-color: #f5f7fa;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--dark) 100%);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(212, 175, 55, 0.1);
+            border-radius: 50%;
+        }
+        
+        header::after {
+            content: "";
+            position: absolute;
+            bottom: -80px;
+            right: -60px;
+            width: 300px;
+            height: 300px;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            position: relative;
+            z-index: 1;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        h2 {
+            color: var(--secondary);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-top: 2.5rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        h2:hover {
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+        
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        h2:hover::after {
+            width: 100px;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .warning {
+            background-color: #fff8e6;
+            border-left: 4px solid var(--primary);
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            border-radius: 0 5px 5px 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .warning::before {
+            content: "⚠";
+            position: absolute;
+            left: -15px;
+            top: -15px;
+            background: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .formula {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f5f7fa;
+            padding: 0.8rem 1.2rem;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 0.5rem 0;
+            border-left: 3px solid var(--primary);
+            font-weight: 500;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+        
+        .formula:hover {
+            background-color: #e9ecef;
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .step {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px dashed #e0e0e0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            background-color: #fafafa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 0 -1rem 2rem -1rem;
+        }
+        
+        .step-number {
+            position: absolute;
+            left: -2.5rem;
+            top: 0;
+            background: var(--primary);
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover .step-number {
+            transform: scale(1.2);
+            box-shadow: 0 3px 8px rgba(212, 175, 55, 0.4);
+        }
+        
+        .qr-container {
+            text-align: center;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .qr-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .qr-code {
+            margin: 1.5rem auto;
+            padding: 1rem;
+            background-color: white;
+            display: inline-block;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            text-decoration: none;
+            border-radius: 30px;
+            margin: 0.5rem;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(212, 175, 55, 0.3);
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(212, 175, 55, 0.4);
+        }
+        
+        .tab {
+            overflow: hidden;
+            border: none;
+            background-color: transparent;
+            border-radius: 30px;
+            display: inline-flex;
+            margin-bottom: 1.5rem;
+            background: #f0f2f5;
+            padding: 0.3rem;
+        }
+        
+        .tab button {
+            background-color: inherit;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 0.8rem 1.5rem;
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 30px;
+            margin: 0 0.2rem;
+        }
+        
+        .tab button:hover {
+            background-color: rgba(212, 175, 55, 0.1);
+        }
+        
+        .tab button.active {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 2px 5px rgba(212, 175, 55, 0.3);
+        }
+        
+        .tabcontent {
+            display: none;
+            padding: 1.5rem;
+            border-radius: 10px;
+            background-color: white;
+            animation: fadeEffect 0.5s;
+        }
+        
+        @keyframes fadeEffect {
+            from {opacity: 0; transform: translateY(10px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .equipment-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        
+        .equipment-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .equipment-item:hover {
+            background: #e9ecef;
+            transform: translateX(10px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .equipment-item::before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-right: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .equipment-item:hover::before {
+            transform: scale(1.5);
+            color: var(--primary-dark);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+            background: var(--secondary);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            transition: all 0.3s ease;
+        }
+        
+        footer:hover {
+            background: var(--dark);
+        }
+        
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        .hidden-content {
+            display: none;
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+            border-left: 4px solid var(--primary);
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+            animation: fadeIn 0.4s;
+        }
+        
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateX(-10px);}
+            to {opacity: 1; transform: translateX(0);}
+        }
+        
+        .toggle-btn {
+            background-color: #f0f2f5;
+            color: var(--secondary);
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            text-align: left;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .toggle-btn:hover {
+            background-color: #e2e6ea;
+            transform: translateX(5px);
+        }
+        
+        .toggle-btn::after {
+            content: '+';
+            margin-left: auto;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-btn.active::after {
+            content: '-';
+            transform: rotate(180deg);
+        }
+        
+        .safety-rules {
+            background-color: #ffebee;
+            border-left: 4px solid var(--danger);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .safety-rules:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.1);
+        }
+        
+        .safety-rules h3 {
+            color: var(--danger);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .safety-rules h3::before {
+            content: "⚠";
+            margin-right: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        /* Анимации текста при наведении */
+        p, li, td {
+            transition: all 0.3s ease;
+        }
+        
+        p:hover, li:hover {
+            color: var(--secondary);
+            transform: translateX(3px);
+        }
+        
+        td:hover {
+            background-color: #f5f5f5;
+            transform: scale(1.02);
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            body {
+                padding: 0 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tab {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            
+            .tab button {
+                flex: 1;
+                min-width: 120px;
+                margin: 0.2rem;
+            }
+            
+            .equipment-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .step-number {
+                left: -1.5rem;
+                width: 1.5rem;
+                height: 1.5rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Извлечение золота химическим путем</h1>
+        <p style="position: relative; z-index: 1;">Полное руководство по химическим методам аффинажа золота</p>
+    </header>
+
+    <div class="container">
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'overview')">Обзор</button>
+            <button class="tablinks" onclick="openTab(event, 'methods')">Методы</button>
+            <button class="tablinks" onclick="openTab(event, 'instructions')">Инструкция</button>
+            <button class="tablinks" onclick="openTab(event, 'safety')">Безопасность</button>
+        </div>
+
+        <div id="overview" class="tabcontent" style="display: block;">
+            <h2>Введение в аффинаж золота</h2>
+            <p>Аффинаж золота — это процесс очистки золота от примесей. Химические методы позволяют извлекать золото из различных источников, включая электронный лом, ювелирные изделия и руды.</p>
+            
+            <div class="warning">
+                <h3>Важное предупреждение!</h3>
+                <p>Все описанные процессы связаны с опасными химическими веществами и должны выполняться только квалифицированными специалистами в соответствующих условиях. Нарушение техники безопасности может привести к тяжелым последствиям для здоровья и окружающей среды.</p>
+            </div>
+            
+            <div class="warning">
+                <h3>Какое золото можно перерабатывать:</h3>
+                <table style="width:100%; border-collapse: collapse;">
+                    <tr>
+                        <th style="border:1px solid #ddd; padding:8px;">Источник</th>
+                        <th style="border:1px solid #ddd; padding:8px;">Содержание золота</th>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #ddd; padding:8px;">Компьютерные процессоры</td>
+                        <td style="border:1px solid #ddd; padding:8px;">0.2-0.5 г/кг</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #ddd; padding:8px;">Ювелирный лом</td>
+                        <td style="border:1px solid #ddd; padding:8px;">30-75%</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #ddd; padding:8px;">Позолоченные контакты</td>
+                        <td style="border:1px solid #ddd; padding:8px;">0.1-3%</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <h3>Основные химические методы извлечения золота:</h3>
+            <div class="equipment-list">
+                <div class="equipment-item">Царская водка - раствор азотной и соляной кислот</div>
+                <div class="equipment-item">Цианирование - растворение золота в цианидах</div>
+                <div class="equipment-item">Электролиз - электрохимическое выделение золота</div>
+                <div class="equipment-item">Амальгамация - использование ртути (устаревший метод)</div>
+            </div>
+        </div>
+
+        <div id="methods" class="tabcontent">
+            <h2>Методы извлечения золота</h2>
+            
+            <button class="toggle-btn" onclick="toggleContent('method1')">Метод царской водки</button>
+            <div id="method1" class="hidden-content">
+                <p>Царская водка (лат. Aqua Regia) — смесь концентрированных азотной (HNO₃) и соляной (HCl) кислот в соотношении 1:3. Способна растворять золото и платину.</p>
+                <p>Оптимальное соотношение кислот: 1 часть HNO₃ к 3 частям HCl (по объему).</p>
+                <p>Признаки правильного приготовления: раствор желтеет из-за образования нитрозильных соединений.</p>
+                <p class="formula">3HCl + HNO₃ → NOCl + Cl₂ + 2H₂O</p>
+                <p class="formula">Au + HNO₃ + 4HCl → HAuCl₄ + NO + 2H₂O</p>
+                <p><strong>Совет:</strong> Всегда добавляйте кислоты в стеклянную посуду, охлажденную в ледяной бане.</p>
+                <p>После растворения золото осаждают из раствора с помощью различных восстановителей.</p>
+            </div>
+            
+            <button class="toggle-btn" onclick="toggleContent('method2')">Цианидный метод</button>
+            <div id="method2" class="hidden-content">
+                <p>Наиболее распространенный промышленный метод, использующий способность золота растворяться в растворах цианидов при доступе кислорода.</p>
+                <p>Типичная концентрация раствора: 0.05-0.3% NaCN.</p>
+                <p>Оптимальный pH: 10.5-11 (поддерживается известью).</p>
+                <p class="formula">4Au + 8NaCN + O₂ + 2H₂O → 4Na[Au(CN)₂] + 4NaOH</p>
+                <p><strong>Важно:</strong> Процесс идет в 2 раза быстрее при температуре 30°C.</p>
+                <p>Затем золото выделяют из раствора цинковой пылью или электролизом.</p>
+                <div class="warning">
+                    <p>Цианиды чрезвычайно токсичны! Этот метод требует специальных разрешений и мер безопасности.</p>
+                </div>
+            </div>
+            
+            <button class="toggle-btn" onclick="toggleContent('method3')">Электролитический метод</button>
+            <div id="method3" class="hidden-content">
+                <p>Используется для очистки золота от примесей. Неочищенное золото служит анодом, при электролизе чистое золото осаждается на катоде.</p>
+                <p class="formula">Анод: Au - 3e⁻ → Au³⁺</p>
+                <p class="formula">Катод: Au³⁺ + 3e⁻ → Au</p>
+                <p>Электролитом обычно служит раствор хлорида золота в соляной кислоте.</p>
+            </div>
+            
+            <button class="toggle-btn" onclick="toggleContent('troubleshooting')">Возможные проблемы и решения</button>
+            <div id="troubleshooting" class="hidden-content">
+                <h4>Проблема: Золото не растворяется</h4>
+                <p>Возможные причины:</p>
+                <ul>
+                    <li>Недостаточно кислоты (добавьте 10% от объема)</li>
+                    <li>Низкая температура (подогрейте до 60°C)</li>
+                    <li>Примеси платины (требуется больше времени)</li>
+                </ul>
+                
+                <h4>Проблема: Мутный осадок</h4>
+                <p>Решение:</p>
+                <ol>
+                    <li>Промыть осадок 5% HCl</li>
+                    <li>Повторно растворить в свежей царской водке</li>
+                    <li>Осадить заново</li>
+                </ol>
+            </div>
+        </div>
+
+        <div id="instructions" class="tabcontent">
+            <h2>Пошаговая инструкция: извлечение золота царской водкой</h2>
+            
+            <div class="safety-rules">
+                <h3>Меры предосторожности:</h3>
+                <ul>
+                    <li>Работайте в вытяжном шкафу или на открытом воздухе</li>
+                    <li>Используйте защитные очки, перчатки и кислотостойкий фартук</li>
+                    <li>Имейте под рукой нейтрализующие растворы (соду для кислот)</li>
+                    <li>Не работайте в одиночку</li>
+                </ul>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Шаг 1: Подготовка материалов</h3>
+                <p><strong>Необходимое оборудование и реактивы:</strong></p>
+                <div class="equipment-list">
+                    <div class="equipment-item">Стеклянная или фарфоровая посуда</div>
+                    <div class="equipment-item">Концентрированная соляная кислота (HCl)</div>
+                    <div class="equipment-item">Концентрированная азотная кислота (HNO₃)</div>
+                    <div class="equipment-item">Стеклянная палочка для перемешивания</div>
+                    <div class="equipment-item">Фильтровальная бумага или воронка Бюхнера</div>
+                    <div class="equipment-item">Восстановитель (гидразин, оксалат натрия или метабисульфит натрия)</div>
+                    <div class="equipment-item">Дистиллированная вода</div>
+                    <div class="equipment-item">Нагревательная плитка</div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Шаг 2: Приготовление царской водки</h3>
+                <p>Смешайте 1 объем азотной кислоты с 3 объемами соляной кислоты в стеклянном сосуде. Делайте это медленно, охлаждая сосуд в ледяной бане.</p>
+                <p class="formula">HNO₃ + 3HCl → NOCl + Cl₂ + 2H₂O</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Шаг 3: Растворение золота</h3>
+                <p>Поместите золотосодержащий материал в царскую водку. Нагревайте смесь на водяной бане (не выше 60-70°C) до полного растворения золота.</p>
+                <p><strong>Визуальные признаки:</strong></p>
+                <ul>
+                    <li>Раствор становится желто-оранжевым</li>
+                    <li>Прекращение выделения пузырьков газа (NO₂)</li>
+                    <li>Полное исчезновение металлических частиц</li>
+                </ul>
+                <p><strong>Если реакция остановилась:</strong> добавьте 1-2 мл HCl и нагрейте.</p>
+                <p>Процесс может занять от 30 минут до нескольких часов в зависимости от количества и чистоты золота.</p>
+                <p class="formula">Au + 3HNO₃ + 4HCl → HAuCl₄ + 3NO₂ + 3H₂O</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Шаг 4: Фильтрация раствора</h3>
+                <p>После полного растворения золота отфильтруйте раствор для удаления нерастворимых примесей. Используйте стеклянную воронку с фильтровальной бумагой.</p>
+                <p>Промойте осадок небольшим количеством разбавленной соляной кислоты.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">5</div>
+                <h3>Шаг 5: Осаждение золота</h3>
+                <p>Медленно добавляйте восстановитель (например, метабисульфит натрия Na₂S₂O₅) в отфильтрованный раствор при постоянном перемешивании.</p>
+                <p>Золото начнет выпадать в виде коричневого порошка.</p>
+                <p><strong>Как проверить полноту осаждения:</strong></p>
+                <ol>
+                    <li>Добавьте 1 каплю раствора на фильтровальную бумагу</li>
+                    <li>Капните 1% раствор SnCl₂ (хлорид олова)</li>
+                    <li>Фиолетовое пятно = золото еще в растворе</li>
+                </ol>
+                <p class="formula">2HAuCl₄ + 3Na₂S₂O₅ + 3H₂O → 2Au + 3Na₂SO₄ + 8HCl + 3SO₂</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">6</div>
+                <h3>Шаг 6: Промывка и сушка</h3>
+                <p>Дайте осадку отстояться, затем декантируйте раствор. Промойте золотой осадок несколько раз дистиллированной водой, затем соляной кислотой для удаления примесей, и снова водой.</p>
+                <p>Высушите осадок при температуре 100-120°C.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">7</div>
+                <h3>Шаг 7: Плавка (опционально)</h3>
+                <p>Для получения слитка высушенный порошок золота можно расплавить в графитовом тигле при температуре около 1100°C с добавлением буры в качестве флюса.</p>
+            </div>
+        </div>
+
+        <div id="safety" class="tabcontent">
+            <h2>Техника безопасности</h2>
+            
+            <div class="warning">
+                <h3>Опасности процесса</h3>
+                <p>Работа с царской водкой и другими химикатами для извлечения золота сопряжена с серьезными рисками:</p>
+                <ul>
+                    <li>Кислоты вызывают тяжелые химические ожоги</li>
+                    <li>Выделение токсичных газов (NO₂, Cl₂, SO₂)</li>
+                    <li>Пожарная опасность (некоторые восстановители легковоспламеняемы)</li>
+                    <li>Опасность взрыва при неправильном смешивании реагентов</li>
+                </ul>
+            </div>
+            
+            <div class="safety-rules">
+                <h3>Хранение реактивов:</h3>
+                <ul>
+                    <li>Кислоты - в стеклянных бутылях с притертыми пробками</li>
+                    <li>Цианиды - в металлических емкостях с пометкой "Яд!"</li>
+                    <li>Восстановители - отдельно от окислителей</li>
+                </ul>
+            </div>
+            
+            <div class="warning">
+                <h3>Типичные ошибки:</h3>
+                <ul>
+                    <li>Использование пластиковой посуды (кислоты разрушают пластик)</li>
+                    <li>Нагрев выше 70°C (ускоряет разложение кислот)</li>
+                    <li>Смешивание больших количеств (>100г золота за раз)</li>
+                </ul>
+            </div>
+            
+            <h3>Обязательные меры безопасности:</h3>
+            <div class="equipment-list">
+                <div class="equipment-item">Всегда используйте химические очки или защитную маску</div>
+                <div class="equipment-item">Кислотостойкие перчатки, фартук, закрытая обувь</div>
+                <div class="equipment-item">Работайте только в вытяжном шкафу или на открытом воздухе</div>
+                <div class="equipment-item">Имейте под рукой раствор соды для нейтрализации кислот</div>
+                <div class="equipment-item">Кислоты храните в стеклянной посуде в прохладном месте</div>
+                <div class="equipment-item">Не сливайте отходы в канализацию</div>
+            </div>
+            
+            <div class="safety-rules">
+                <h3>Первая помощь:</h3>
+                <ul>
+                    <li><strong>Попадание на кожу:</strong> немедленно промойте большим количеством воды в течение 15 минут</li>
+                    <li><strong>Попадание в глаза:</strong> промывайте глаза под проточной водой не менее 15 минут, обратитесь к врачу</li>
+                    <li><strong>Вдыхание паров:</strong> выйдите на свежий воздух, при затруднении дыхания обратитесь за медицинской помощью</li>
+                    <li><strong>Проглатывание:</strong> не вызывайте рвоту, немедленно обратитесь за медицинской помощью</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="qr-container">
+        <h2>QR-код для быстрого доступа</h2>
+        <div class="qr-code">
+            <img id="qr-image" alt="QR Code" style="width: 200px; height: 200px;">
+        </div>
+        <p>Отсканируйте этот код камерой вашего смартфона, чтобы сохранить ссылку на этот ресурс</p>
+    </div>
+
+    <footer>
+        <p>© 2023 Извлечение золота химическим путем. Информационный ресурс.</p>
+        <p><strong>Предупреждение:</strong> Данный материал предоставлен исключительно в образовательных целях.</p>
+    </footer>
+
+    <script>
+        // Генерация QR-кода
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUrl = window.location.href;
+            const qrImage = document.getElementById('qr-image');
+            
+            qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentUrl)}`;
+            
+            qrImage.onerror = function() {
+                this.src = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(currentUrl)}`;
+            };
+        });
+
+        // Функции для работы с вкладками
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tabcontent");
+            for (let i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            
+            const tablinks = document.getElementsByClassName("tablinks");
+            for (let i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Функция для показа/скрытия контента
+        function toggleContent(id) {
+            const content = document.getElementById(id);
+            const btn = content.previousElementSibling;
+            
+            if (content.style.display === "block") {
+                content.style.display = "none";
+                btn.classList.remove("active");
+            } else {
+                content.style.display = "block";
+                btn.classList.add("active");
+            }
+        }
+
+        // Автоматическое открытие вкладки из URL
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            if (tab) {
+                const tabBtn = document.querySelector(`.tablinks[onclick*="${tab}"]`);
+                if (tabBtn) tabBtn.click();
+            }
+        };
+    </script>
+</body>
+</html>
